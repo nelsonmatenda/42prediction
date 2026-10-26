@@ -155,9 +155,9 @@ certs:
 # is needed here.
 up-prod: require-env
 	@$(PROD_COMPOSE) up -d --build
-	@echo "Stack starting. Frontend: https://localhost:5173 | Backend: https://localhost:3000"
-	@echo "Kibana: http://localhost:5601 | Grafana: http://localhost:3001 | Prometheus: http://localhost:9090"
-	@echo "Self-signed cert: browsers will warn 'not private' on first visit — that's expected, accept/proceed once per browser."
+# 	@echo "Stack starting. Frontend: https://localhost:5173 | Backend: https://localhost:3000"
+# 	@echo "Kibana: http://localhost:5601 | Grafana: http://localhost:3001 | Prometheus: http://localhost:9090"
+# 	@echo "Self-signed cert: browsers will warn 'not private' on first visit — that's expected, accept/proceed once per browser."
 
 down-prod:
 	@$(PROD_COMPOSE) down

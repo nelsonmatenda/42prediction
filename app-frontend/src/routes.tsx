@@ -38,6 +38,7 @@ export const router = createBrowserRouter([
     path: '*',
     Component: Notfound,
   }
-]
-)
-
+],
+{
+  basename: '/42prediction',
+})
