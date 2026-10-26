@@ -10,10 +10,9 @@ COPY . .
 ARG VITE_API_URL=https://localhost:3000
 ENV VITE_API_URL=$VITE_API_URL
 RUN npm run build
+RUN npm install -g serve
 
-# ---- Runtime stage: static files served by nginx ----
-FROM nginx:1.27-alpine AS runner
-COPY nginx.conf /etc/nginx/conf.d/default.conf
-COPY --from=builder /app/dist /usr/share/nginx/html
+EXPOSE 4173
 
-EXPOSE 80 443
+# O CMD é obrigatório para manter o container rodando em tempo de execução
+CMD ["serve", "-s", "dist", "-l", "5173"]

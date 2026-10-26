@@ -1,4 +1,4 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 
 export interface Student42 {
@@ -43,7 +43,6 @@ function sleep(ms: number): Promise<void> {
 
 @Injectable()
 export class School42Service {
-  private readonly logger = new Logger(School42Service.name);
   private readonly baseUrl = 'https://api.intra.42.fr/v2';
   private readonly campusId: number;
   private cachedToken: AppToken | null = null;
@@ -99,7 +98,7 @@ export class School42Service {
       expires_at: now + data.expires_in * 1000,
     };
 
-    this.logger.log('42 School app token refreshed');
+    console.log('42 School app token refreshed');
     return this.cachedToken.access_token;
   }
 
@@ -133,7 +132,7 @@ export class School42Service {
       const backoffMs = Number.isFinite(retryAfterSeconds) && retryAfterSeconds > 0
         ? retryAfterSeconds * 1000
         : 1000 * 2 ** attempt;
-      this.logger.warn(
+      console.warn(
         `42 API rate limited on ${path}, retrying in ${backoffMs}ms (attempt ${attempt + 1}/${School42Service.MAX_429_RETRIES})`,
       );
       await sleep(backoffMs);
@@ -198,7 +197,7 @@ export class School42Service {
 
       return users.map((u) => this.mapUser(u));
     } catch (err) {
-      this.logger.warn(`searchStudents failed: ${err}`);
+      console.warn(`searchStudents failed: ${err}`);
       return [];
     }
   }
@@ -226,7 +225,7 @@ export class School42Service {
         };
       }).filter((s) => s.login);
     } catch (err) {
-      this.logger.warn(`getTopStudents failed: ${err}`);
+      console.warn(`getTopStudents failed: ${err}`);
       return [];
     }
   }
@@ -247,7 +246,7 @@ export class School42Service {
 
       return exams.filter((e) => e && e.id && e.begin_at).map((e) => this.mapExam(e));
     } catch (err) {
-      this.logger.warn(`getUpcomingExams failed: ${err}`);
+      console.warn(`getUpcomingExams failed: ${err}`);
       return [];
     }
   }
@@ -259,7 +258,7 @@ export class School42Service {
       if (!e?.id) return null;
       return this.mapExam(e);
     } catch (err) {
-      this.logger.warn(`getExam(${examId}) failed: ${err}`);
+      console.warn(`getExam(${examId}) failed: ${err}`);
       return null;
     }
   }
@@ -331,7 +330,7 @@ export class School42Service {
 
     const projectId = exam.projectId;
     if (projectId == null) {
-      this.logger.warn(`fetchProjectUsers(${exam.id}): exam has no linked project, skipping`);
+      console.warn(`fetchProjectUsers(${exam.id}): exam has no linked project, skipping`);
       return [];
     }
 
@@ -378,7 +377,7 @@ export class School42Service {
         level,
       };
     } catch (err) {
-      this.logger.warn(`getStudent(${login}) failed: ${err}`);
+      console.warn(`getStudent(${login}) failed: ${err}`);
       return null;
     }
   }

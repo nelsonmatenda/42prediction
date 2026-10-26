@@ -15,7 +15,7 @@ export async function adminSeed(dataSource: DataSource, bettorService: BettorSer
     let admin = await userRepo.findOneBy({email: 'admin@dev.com'});
     if (!admin){
         admin = await userRepo.save(userRepo.create({
-            email:  'admin@dev.com',
+            email:  'matendafigueiredo@hotmail.com',
             password: await bcrypt.hash(adminPwd, 10),
             role: Role.ADMIN,
             state: true,

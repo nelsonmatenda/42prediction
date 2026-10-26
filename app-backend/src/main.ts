@@ -5,7 +5,6 @@ import { NestExpressApplication } from '@nestjs/platform-express';
 import { join } from 'path';
 import { existsSync, readFileSync } from 'fs';
 import cookieParser from 'cookie-parser';
-import { Logger } from 'nestjs-pino';
 import { SocketIoAdapter } from './socket-io.adapter';
 
 // TLS is enabled when SSL_KEY_PATH/SSL_CERT_PATH point to real files (set by
@@ -26,8 +25,6 @@ async function bootstrap() {
     bufferLogs: true,
     ...(httpsOptions && { httpsOptions }),
   });
-
-  app.useLogger(app.get(Logger));
 
   app.use(cookieParser());
 

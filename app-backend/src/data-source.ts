@@ -2,25 +2,17 @@ import { DataSource } from "typeorm";
 import { config } from "dotenv";
 config({ path: "../.env" });
 
-const dbPort = process.env.DB_PORT;
-
-if (!dbPort) {
-    throw new Error("DB_PORT environment variable is required");
-}
-
-const parsedDbPort = Number.parseInt(dbPort, 10);
-
-if (Number.isNaN(parsedDbPort)) {
-    throw new Error("DB_PORT must be a valid number");
+const dbURL = process.env.DB_URL;
+if (!dbURL) {
+    throw new Error('Environment variable DB_URL is not set');
 }
 
 export const AppDataSource = new DataSource({
     type: 'postgres',
-    host: process.env.DB_HOST,
-    port: parsedDbPort,
-    username: process.env.DB_USER,
-    password: process.env.DB_PASS,
-    database: process.env.DB_NAME,
+    url: dbURL,
+    ssl: {
+        rejectUnauthorized: false,
+    },
     entities: [__dirname + '/modules/**/*.entity{.ts,.js}'],
     migrations: [__dirname + '/migrations/*{.ts,.js}'],
     synchronize: false,

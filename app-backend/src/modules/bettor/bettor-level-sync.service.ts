@@ -1,4 +1,4 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { Cron, CronExpression } from '@nestjs/schedule';
 import { InjectRepository } from '@nestjs/typeorm';
 import { DataSource, IsNull, Not, Repository } from 'typeorm';
@@ -10,8 +10,6 @@ import { School42Service } from '../school42/school42.service';
 
 @Injectable()
 export class BettorLevelSyncService {
-  private readonly logger = new Logger(BettorLevelSyncService.name);
-
   constructor(
     @InjectRepository(Bettor)
     private readonly bettorRepo: Repository<Bettor>,
@@ -27,7 +25,6 @@ export class BettorLevelSyncService {
     });
     if (cadets.length === 0) return;
 
-    this.logger.log(`Level sync: checking ${cadets.length} 42 cadet(s)`);
     let credited = 0;
 
     for (const cadet of cadets) {
@@ -56,10 +53,7 @@ export class BettorLevelSyncService {
         });
         credited++;
       } catch (err) {
-        this.logger.warn(`Level sync failed for ${cadet.school42Login}: ${err}`);
       }
     }
-
-    this.logger.log(`Level sync done: ${credited} cadet(s) credited`);
   }
 }

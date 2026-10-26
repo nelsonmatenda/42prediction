@@ -153,7 +153,7 @@ certs:
 # On boot the backend container runs pending migrations and seeds the admin
 # account (docker-entrypoint.sh, idempotent), so no separate migrate/seed step
 # is needed here.
-up-prod: require-env certs
+up-prod: require-env
 	@$(PROD_COMPOSE) up -d --build
 	@echo "Stack starting. Frontend: https://localhost:5173 | Backend: https://localhost:3000"
 	@echo "Kibana: http://localhost:5601 | Grafana: http://localhost:3001 | Prometheus: http://localhost:9090"

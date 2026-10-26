@@ -1,4 +1,4 @@
-import { forwardRef, Inject, Logger } from '@nestjs/common';
+import { forwardRef, Inject} from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -47,7 +47,6 @@ export class MarketGateway implements OnGatewayConnection, OnGatewayDisconnect {
   @WebSocketServer()
   server!: Server;
 
-  private readonly logger = new Logger(MarketGateway.name);
   private readonly chatHistory = new Map<string, ChatMessage[]>();
 
   constructor(
@@ -69,11 +68,11 @@ export class MarketGateway implements OnGatewayConnection, OnGatewayDisconnect {
       const bettor = await this.resolveBettor(client, userId);
       if (bettor) void client.join(this.notificationRoom(bettor.id));
     }
-    this.logger.debug(`Client connected: ${client.id}`);
+    console.debug(`Client connected: ${client.id}`);
   }
 
   handleDisconnect(client: Socket) {
-    this.logger.debug(`Client disconnected: ${client.id}`);
+    console.debug(`Client disconnected: ${client.id}`);
   }
 
   emitMarketUpdate(market: unknown) {
@@ -161,7 +160,7 @@ export class MarketGateway implements OnGatewayConnection, OnGatewayDisconnect {
           fromNick: bettor.nick,
           text,
         })
-        .catch((err) => this.logger.warn(`chat mention notify failed: ${err}`));
+        .catch((err) => console.warn(`chat mention notify failed: ${err}`));
     }
 
     return { message };

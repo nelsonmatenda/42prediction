@@ -1,4 +1,4 @@
-import { BadRequestException, ConflictException, Injectable, Logger, NotFoundException } from "@nestjs/common";
+import { BadRequestException, ConflictException, Injectable, NotFoundException } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Wallet } from "./entities/wallet.entity";
 import { Repository, DataSource, EntityManager } from "typeorm";
@@ -13,7 +13,6 @@ export const ADMIN_TREASURY_BALANCE = 1_000_000;
 
 @Injectable()
 export class WalletService {
-    private readonly logger = new Logger(WalletService.name);
 
     constructor(
         @InjectRepository(Wallet) private walletRepository: Repository<Wallet>,
@@ -49,7 +48,7 @@ export class WalletService {
 
             await manager.save(Transaction, transaction);
 
-            this.logger.log(`Wallet created for user ${idBettor} with initial balance of ${initialBalance}`);
+            console.log(`Wallet created for user ${idBettor} with initial balance of ${initialBalance}`);
             return this.toWalletDto(savedWallet);
         });
     }
@@ -105,7 +104,7 @@ export class WalletService {
             });
 
             const saved = await manager.save(Transaction, transaction);
-            this.logger.log(`Credit of ${dto.amount} applied to user ${idBettor}. New balance: ${balanceAfter}`);
+            console.log(`Credit of ${dto.amount} applied to user ${idBettor}. New balance: ${balanceAfter}`);
             return this.toTransactionDto(saved);
         };
         return externalManager ? run(externalManager) : this.dataSource.transaction(run);
@@ -142,7 +141,7 @@ export class WalletService {
             });
 
             const saved = await manager.save(Transaction, transaction);
-            this.logger.log(`Debit of ${dto.amount} applied to user ${idBettor}. New balance: ${balanceAfter}`);
+            console.log(`Debit of ${dto.amount} applied to user ${idBettor}. New balance: ${balanceAfter}`);
             return this.toTransactionDto(saved);
         });
     }

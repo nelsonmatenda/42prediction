@@ -1,4 +1,4 @@
-import { Injectable, Logger, OnModuleInit } from '@nestjs/common';
+import { Injectable, OnModuleInit } from '@nestjs/common';
 import { Cron } from '@nestjs/schedule';
 import { InjectRepository } from '@nestjs/typeorm';
 import { In, IsNull, Not, Repository } from 'typeorm';
@@ -31,7 +31,6 @@ function mapExamNameToCategory(examName: string): MarketCategory | null {
 
 @Injectable()
 export class ExamMarketSyncService implements OnModuleInit {
-  private readonly logger = new Logger(ExamMarketSyncService.name);
   private systemBettorId: string | null = null;
 
   private static readonly AUTO_MARKET_SEED = 200;
@@ -55,7 +54,7 @@ export class ExamMarketSyncService implements OnModuleInit {
     if (process.env.SEED_MODE === 'true') return;
     setTimeout(() => {
       void this.syncExamMarkets().catch((err) =>
-        this.logger.error(`initial syncExamMarkets on startup failed: ${err}`),
+        console.error(`ExamMarketSyncService: initial syncExamMarkets failed: ${err}`)
       );
     }, 5000);
   }
@@ -71,7 +70,7 @@ export class ExamMarketSyncService implements OnModuleInit {
       try {
         const category = mapExamNameToCategory(exam.name);
         if (!category) {
-          this.logger.debug(`syncExamMarkets: "${exam.name}" is outside the Exam 02-06 scope, skipping`);
+          console.warn(`syncExamMarkets: skipping exam ${exam.id} (${exam.name}), could not determine category`);
           continue;
         }
 
@@ -88,13 +87,11 @@ export class ExamMarketSyncService implements OnModuleInit {
           );
 
           if (validCampus.size === 0 && candidates.length > 0) {
-            this.logger.warn(
-              `syncExamMarkets: campus verify matched 0 of ${candidates.length} candidates for exam ${exam.id}, skipping this cycle`,
-            );
+            console.warn(`syncExamMarkets: no valid campus cadets found for exam ${exam.id} (${exam.name})`);
             validCampus = null;
           }
         } catch (err) {
-          this.logger.warn(`syncExamMarkets: campus verify failed for exam ${exam.id}: ${err}`);
+          console.warn(`syncExamMarkets: failed to filter to primary campus for exam ${exam.id} (${exam.name}): ${err}`);
         }
 
         const invalidCampusLogins = new Set<string>();
@@ -145,9 +142,7 @@ export class ExamMarketSyncService implements OnModuleInit {
               description: `Auto exam market seed: ${exam.name} — ${cadet.login}`,
             });
           } catch (err) {
-            this.logger.warn(
-              `syncExamMarkets: skipping ${cadet.login} (${exam.name}), admin seed debit failed: ${err}`,
-            );
+            console.warn(`syncExamMarkets: failed to debit system bettor for exam ${exam.id} (${exam.name}), cadet ${cadet.login}: ${err}`);
             continue;
           }
 
@@ -189,11 +184,13 @@ export class ExamMarketSyncService implements OnModuleInit {
 
         await this.cancelDeregisteredMarkets(exam, rosterLogins, invalidCampusLogins);
       } catch (err) {
-        this.logger.warn(`syncExamMarkets failed for exam ${exam.id}: ${err}`);
+        console.warn(`syncExamMarkets failed for exam ${exam.id}: ${err}`);
       }
     }
 
-    this.logger.log(`syncExamMarkets: processed ${exams.length} exam(s) in ${Date.now() - startedAt}ms`);
+    console.log(
+      `syncExamMarkets: processed ${exams.length} exam(s) in ${Date.now() - startedAt}ms`,
+    );
   }
 
 
@@ -260,12 +257,12 @@ export class ExamMarketSyncService implements OnModuleInit {
           await this.marketService.resolveMarket(market.id, resolution, finalMark);
         }
       } catch (err) {
-        this.logger.warn(`autoResolveExamMarkets failed for exam ${examId}: ${err}`);
+        console.warn(`autoResolveExamMarkets failed for exam ${examId}: ${err}`);
       }
     }
 
-    this.logger.log(
-      `autoResolveExamMarkets: processed ${examIds.length} exam(s), ${pending.length} pending market(s) in ${Date.now() - startedAt}ms`,
+    console.log(
+      `autoResolveExamMarkets: processed ${examIds.length} exam(s) in ${Date.now() - startedAt}ms`,
     );
   }
 
@@ -274,7 +271,7 @@ export class ExamMarketSyncService implements OnModuleInit {
 
     const admin = await this.userRepo.findOne({ where: { role: Role.ADMIN } });
     if (!admin) {
-      this.logger.warn('No admin user found to own auto-generated exam markets');
+      console.warn('getOrCreateSystemBettorId: no admin user found, cannot create system bettor');
       return null;
     }
 

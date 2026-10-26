@@ -2,7 +2,6 @@ import {
   BadRequestException,
   ForbiddenException,
   Injectable,
-  Logger,
   NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -25,7 +24,6 @@ import { avataaarsNeutral } from '@dicebear/collection';
 
 @Injectable()
 export class MarketService {
-  private readonly logger = new Logger(MarketService.name);
 
   private static readonly HOUSE_RAKE_RATE = 0.05;
 
@@ -304,7 +302,7 @@ export class MarketService {
             : `House rake (${(MarketService.HOUSE_RAKE_RATE * 100).toFixed(0)}%) on market: ${market.project}`,
         });
       } catch (err) {
-        this.logger.warn(
+        console.warn(
           `Creator credit of ${creatorCredit} to ${market.creatorId} failed on market ${market.id}: ${err}`,
         );
       }

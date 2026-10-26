@@ -1,4 +1,4 @@
-import { forwardRef, Inject, Injectable, Logger } from '@nestjs/common';
+import { forwardRef, Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { In, Repository } from 'typeorm';
 import { Bettor } from '../bettor/entities/bettor.entity';
@@ -18,7 +18,6 @@ interface NewNotification {
 
 @Injectable()
 export class NotificationService {
-  private readonly logger = new Logger(NotificationService.name);
 
   constructor(
     @InjectRepository(Notification)
