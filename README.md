@@ -33,6 +33,8 @@ Key features:
   DB_USER=
   DB_NAME=transcendence_db
 
+  VITE_API_URL=http://localhost:3000
+
   GOOGLE_CLIENT_ID=
   GOOGLE_CLIENT_SECRET=
   GOOGLE_CALLBACK_URL=http://localhost:3000/auth/google/callback
@@ -48,6 +50,8 @@ Key features:
   JWT_SECRET=
   FRONTEND_URL=http://localhost:5173
   ```
+
+  `VITE_API_URL` is used by the frontend for API requests and OAuth login links. Set it to the public API URL in production (for example, `https://matenda.me/42prediction/api`).
 
   The Postgres container additionally reads its password from `secrets/db_password.txt` (see `docker-compose.dev.yml`). The observability stack reads `ELASTIC_PASSWORD`, `KIBANA_SYSTEM_PASSWORD`, `GRAFANA_ADMIN_PASSWORD` and `LOG_RETENTION_DAYS` from `.env`; the boot-time admin seed needs `ADMIN_PWD`.
 
@@ -294,5 +298,4 @@ Built the **friends system** end-to-end: `friend.api.ts`, the friends list UI, r
 Built **two-factor authentication** end-to-end: the TOTP backend (`otplib`), QR-code enrolment, the temp-token cookie flow that challenges 2FA-enabled users at login (for password *and* OAuth logins), and the frontend verify page; also fixed the production Makefile.
 
 *Challenge:* wiring the 2FA challenge into three different login paths (credentials, Google, 42) while `dev` kept moving — resolved through successive merges of `dev` into the `feat/2fa` branch and a final integration pass (`feat: merge feat/2fa to feat/devops`).
-
 
