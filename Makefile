@@ -166,6 +166,10 @@ down-prod:
 logs-prod:
 	@$(PROD_COMPOSE) logs -f $(SERVICE)
 
+up-front: 
+	@$(PROD_COMPOSE) build --no-cache frontend
+	@$(PROD_COMPOSE) up -d --no-deps frontend
+
 ps-prod:
 	@$(PROD_COMPOSE) ps
 

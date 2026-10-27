@@ -5,11 +5,10 @@ import UsersPage from './pages/Users';
 import AnalyticsPage from './pages/Analytics';
 import { redirect } from 'react-router-dom';
 
-
 export const adminDashboardRoute = [
     {
     index: true,
-    loader: () => redirect("/admin/login"),
+    loader: () => redirect("login"),
     },
     {
         path: 'login',

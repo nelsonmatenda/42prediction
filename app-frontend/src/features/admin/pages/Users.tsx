@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { user as userApi, type UserMe } from "@/api/user/user.api";
 import { auth } from "@/api/auth/auth.api";
 import { BarChart3, ChevronLeft, Loader2, LogOut, Search, ShieldCheck, ShieldOff, Trash2 } from "lucide-react";
-import { Link, useRouteLoaderData } from "react-router-dom";
+import { Link, useNavigate, useRouteLoaderData } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { LUANDA_TZ } from "@/lib/utils";
@@ -12,6 +12,7 @@ export default function UsersPage() {
     const [filtered, setFiltered] = useState<UserMe[]>([]);
     const [loading, setLoading] = useState(true);
     const [search, setSearch] = useState("");
+    const navigate = useNavigate();
     const data = useRouteLoaderData('admin-root') as any;
     const profile = data?.data;
     const isAdmin = profile?.role === 'admin';
@@ -49,7 +50,7 @@ export default function UsersPage() {
 
     const handleLogout = async () => {
         await auth.signout();
-        window.location.href = '/admin/login';
+        navigate('/admin/login', { replace: true });
     };
 
     if (loading) return (
